@@ -6,6 +6,7 @@ const { json } = require('express')
 const express = require('express')
 
 const mysql = require('mysql')
+const WorkerDataBase = require('./services/worker-data-base')
 //Подключение к базе данных
 // 1- создадим функцию-конфигурацию для подключения
 function config() {
@@ -226,3 +227,7 @@ require('./routes/user/get-user')(app, connect)
 
 //Начинаем прослушивать определенный порт
 app.listen(3000)
+
+// ДЗ
+// Реализовать в сервисе WorkerDataBase, удаление пользователя из БД и применить используя роут, воркер
+// Для удаления конкретного юзера

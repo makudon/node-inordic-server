@@ -1,10 +1,29 @@
 // В node можно экспортировать ИСКЛЮЧИТЕЛЬНО через конструкцию
 // module.exports = (можно экспортировать классф, переменные, функции и тд)
 // Абстрактный класс для работы с таблицами в БД
+//
+//
+//Список атрибутов:
+//name_table - название таблицы с которой будет работать реализация
+//
+//
+//Список методов:
+//getConnect - устанавливаем соединение с базой данных и обязательно возвращаем его
+//
+//getAll - обращается к таблице и возвращает из нее ве поля и все строки
+//
+//get - обращается в таблице и возвращает определенный элемент(строку) из таблицы, работает за счет параметра id, который мы передаем из вне
+//
+//query - отправка запроса на сервер
+//
+//update - обновление (тема 434 урока)
+//
+//del - удаление (ДЗ) - ориентируемся на метод get
 
 const mysql = require('mysql')
 
 module.exports = class WorkerDataBase {
+	//делаем пустые атрибуты которые будем устанавливать в каждой реализации
 	response
 	request
 	name_table
@@ -20,45 +39,38 @@ module.exports = class WorkerDataBase {
 		acquireTimeout: 60 * 60 * 1000,
 		timeout: 60 * 60 * 1000,
 	}
+
+	query(sql) {
+		this.getConnect().query(sql, (error, result) => {
+			if (error) {
+				// Выводим ошибку
+				this.response.send(error)
+				// Если ошибок нет
+			} else {
+				// Отправляем результат запроса на экран
+				this.response.send(
+					// Предварительно через метод JSON.stringify преобразуем объект в строку JSON
+					JSON.stringify(result)
+				)
+			}
+		})
+	}
+
 	getConnect() {
 		return mysql.createPool(this.#config)
 	}
 	getAll() {
 		// Абстрактный запрос к базе банных
 		const sql = `SELECT * FROM ${this.name_table}`
-		this.getConnect().query(sql, (error, result) => {
-			if (error) {
-				// Выводим ошибку
-				this.response.send(error)
-				// Если ошибок нет
-			} else {
-				// Отправляем результат запроса на экран
-				this.response.send(
-					// Предварительно через метод JSON.stringify преобразуем объект в строку JSON
-					JSON.stringify(result)
-				)
-			}
-		})
+		this.query(sql)
 	}
 	get(id) {
 		// Абстрактный запрос к базе банных
 		const sql = `SELECT * FROM ${this.name_table} WHERE ID = '${id}'`
-		this.getConnect().query(sql, (error, result) => {
-			if (error) {
-				// Выводим ошибку
-				this.response.send(error)
-				// Если ошибок нет
-			} else {
-				// Отправляем результат запроса на экран
-				this.response.send(
-					// Предварительно через метод JSON.stringify преобразуем объект в строку JSON
-					JSON.stringify(result)
-				)
-			}
-		})
+		this.query(sql)
 	}
 	add(data) {
-		let sql = `INSERT INTO '${this.name_table}'`
+		let sql = `INSERT INTO ${this.name_table}`
 		//Сгенерировать запрос для добавления товара в БД
 		// INSERT - добавление в БД
 		// const sql =
@@ -82,12 +94,46 @@ module.exports = class WorkerDataBase {
 		// 	'", "' +
 		// 	role +
 		// 	'")'
+		//с помощью одного цикла собрать 2 части запроса
+		//проинициализируем 2 переменных которые будут содержать 2 части запроса
+		//(IDNAMESURNAMEEMAILIMGPHONELOGINPASSWORDROLE)
+		let partFields = '('
+		let partValue = '('
+		// количество полей внутри даты
+		// первый шагом получаем вее ключи из объекта, object keys вернет масси с ключами полей и дальше можно обратиться к длине этого массива
+		const keysForData = Object.keys(data)
+		// второй шаг - получаем длину массива ключей
+		const length = keysForData.length
+		//в цикле наша задача собрать через конкатенацию(склеивание строк) 2 части запроса
+		let i = 0
 		for (const field in data) {
 			console.log('Название поля:', field)
 			console.log('Значение поля:', data[field])
+			partFields += '`' + field + '`'
+			partValue += "'" + data[field] + "'"
+			//если на текущей итерации, элемент массива последний, тогда мы не добавляем запятую, если наоборот то добавляем
+			//если элемент последний, в конце не нужно добавлять запятую и пробел
+			if (length - 1 !== i) {
+				partFields += `, `
+				partValue += `, `
+			}
+			//создаем счетчик итераций в for in
+			i++
+			console.log('length', length)
+			console.log('счетчик итераций', i)
 		}
-		sql += ''
+		//после цикла нужно закрыть скобку
+		partFields += ')'
+		partValue += ')'
 
-		this.response.send(sql)
+		//Дособираем шаблон
+		sql += partFields + ' VALUES ' + partValue
+
+		//отправляем запрос через метод query
+		this.query(sql)
 	}
+}
+
+update (data) {
+	
 }

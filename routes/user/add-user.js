@@ -23,7 +23,9 @@ module.exports = (app, connect) => {
 			ROLE: req.body.ROLE,
 		}
 
+		//инициализируем объект класс workertableuser  при этом ему передаем в конструктор
 		const workerTableUser = new WorkerTableUser(res, req)
+		//добавляем пользователя через воркер
 		workerTableUser.add(data)
 
 		// const id = uuid.v4()
