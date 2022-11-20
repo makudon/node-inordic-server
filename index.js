@@ -137,6 +137,9 @@ require('./routes/user/get-all-users')(app, connect)
 require('./routes/user/get-user')(app)
 require('./routes/user/edit-user')(app)
 
+//Роуты для отправки писем
+require('./routes/mail/index')(app)
+
 //Начинаем прослушивать определенный порт
 app.listen(3000)
 
