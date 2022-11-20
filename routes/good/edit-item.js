@@ -1,7 +1,8 @@
+const WorkerTableGood = require('../../services/worker-tables/goods')
 // Добавляем плагин multer для работы с формами и файлами в node.js
 const multer = require('multer')
 //настраиваем куда будем сохранять файл
-const uploadFromForm = multer({dest: 'uploads/'})
+const uploadFromForm = multer({ dest: 'uploads/' })
 // устанавливаем название файла в форме
 const fileFromForm = uploadFromForm.single('MYFILE')
 
@@ -16,31 +17,27 @@ const fileFromForm = uploadFromForm.single('MYFILE')
  */
 
 module.exports = (app, connect) => {
-    app.post ('/edit_item', fileFromForm ,function(req, res){
-        const id = req.body.ID
-        const title = req.body.TITLE
-        const discr = req.body.DISCR
-        const price = req.body.PRICE
-        const img = req.body.IMG
-        const count = req.body.COUNT
+	app.post('/goods/edit', fileFromForm, function (req, res) {
+		const data = {
+			ID: req.body.ID,
+			TITLE: req.body.TITLE,
+			DISCR: req.body.DISCR,
+			PRICE: req.body.PRICE,
+			IMG: req.body.IMG,
+			COUNT: req.body.COUNT,
+		}
 
-        //ДЗ оптимизировать формиравание строки SQL
-        const sql = "UPDATE `goods` SET `TITLE`='"+ title +"', `DISCR`='"+ discr +"', " +
-            "`PRICE`='"+ price +"', `IMG`='"+ img +"', `COUNT`='"+ count +"' WHERE `ID` = '"+ id +"'"
+		const workerTableGood = new WorkerTableGood(res, req)
+		workerTableGood.update(data)
+	})
 
-        connect.query(sql, (err, result) => {
-            err ? res.send(err) : res.send(JSON.stringify((result)))
-        })
-})
-
-
-app.get ('/form_edit_item', function (req, res){
-    res.send(
-        `
+	app.get('/form_edit_item', function (req, res) {
+		res.send(
+			`
                 <h1>
-                    Тестовая форма для маршрута - edit_item
+                    Тестовая форма для маршрута - goods/edit
                 </h1>
-                <form enctype="multipart/form-data" action='/edit_item' method='post'>
+                <form enctype="multipart/form-data" action='/goods/edit' method='post'>
                     <input placeholder="ID" type="text" name="ID"/>
                     <input placeholder="TITLE" type="text" name="TITLE"/>
                     <input placeholder="DISCR" type="text" name="DISCR"/>
@@ -50,6 +47,6 @@ app.get ('/form_edit_item', function (req, res){
                     <input type='submit' value="Добавить"/>
                 </form>
             `
-    )
-})
+		)
+	})
 }

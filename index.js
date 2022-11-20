@@ -55,95 +55,6 @@ const myAero =
 	// объект MyAero c полями goFly
 	// 2 - задействуем метод пoFly из класса FirstCLACCAERO
 
-	//Киты ООП
-
-	// 1 - наследование
-	// class Children extends FirstClassAero {
-	// 	#attrChild = 'Приватный атрибут'
-	// 	methodChildren() {
-	// 		console.log('Приватный атрибут', this.#attrChild)
-	// 	}
-	// 	getPrivateAttr() {
-	// 		return this.#attrChild
-	// 	}
-	// 	constructor() {
-	// 		super()
-	// 		console.log('Имя родительского класса', this.name)
-	// 		this.goFly()
-	// 		console.log(this.#attrChild)
-	// 	}
-	// }
-
-	// Инициализируем объект класса и присваиваем его в меременную
-	// const objChildren = new Children()
-	// Обращаемся к методу класса
-	// objChildren.methodChildren()
-	//Вернем из класса приватный атрибут и запишем его в переменную
-	// const privateAttr = objChildren.getPrivateAttr()
-	// console.log('Приватный атрибут вне класса', privateAttr)
-
-	// 2 - Инкапсуляция
-	// class Children2 extends Children {
-	// Защищенные (protected) атрибуты обозначаются нижним подчеркиванием
-	// Можем его перезаписать но это нарушение договоренности
-	// 	_attr = 'Защищенный атрибут'
-
-	// 	getPrivateAttrParent() {
-	//Получаем внутри дочернего класса приватный отрибут родительского класса через его публичный метод getPrivateAttr
-	// 		const privateAttrParent = this.getPrivateAttr()
-	// 		console.log('Приватный атрибут родителя')
-	// 		return privateAttrParent
-	// 	}
-
-	// 	constructor() {
-	// 		super()
-	// Тут нельзя использовать приватный атрибут родительского класса
-	// console.log(this.#attrChild)
-	// 	}
-	// }
-	// Создаем объект класса
-	// const children2 = new Children2()
-	// const privateAttrParent = children2.getPrivateAttrParent()
-	// console.log('Приватный атрибут родителя, вне всех классов', privateAttrParent)
-
-	// 3 - Полиморфизм и Абстракция
-
-	// Абстрактный класс Animal (не имеет определенной реализации)
-	// class Animal {
-	// 	voiceMessage = ''
-	// 	name = ''
-
-	// 	hello() {
-	// 		console.log(`Привет меня зовут: ${this.name}`)
-	// 	}
-	// 	voices() {
-	// 		console.log(`Голос: ${this.voiceMessage}`)
-	// 	}
-	// }
-
-	// class Dog extends Animal {
-	// 	constructor() {
-	// 		super()
-	// 		this.name = 'Рекс'
-	// 		this.voiceMessage = 'гав гав'
-	// 	}
-	// }
-
-	// class Cat extends Animal {
-	// 	constructor() {
-	// 		super()
-	// 		this.name = 'Мурзик'
-	// 		this.voiceMessage = 'мяу мяу'
-	// 	}
-	// }
-
-	// const dog = new Dog()
-	// dog.voices()
-	// dog.hello()
-	// const cat = new Cat()
-	// cat.voices()
-	// cat.hello()
-
 	/**
 	 * План для построения интернет магазина (что нужно добавить)
 	 *
@@ -223,7 +134,8 @@ require('./routes/good/edit-item')(app, connect)
 //Роуты для пользователей
 require('./routes/user/add-user')(app, connect)
 require('./routes/user/get-all-users')(app, connect)
-require('./routes/user/get-user')(app, connect)
+require('./routes/user/get-user')(app)
+require('./routes/user/edit-user')(app)
 
 //Начинаем прослушивать определенный порт
 app.listen(3000)

@@ -1,3 +1,5 @@
+const WorkerTableGood = require('../../services/worker-tables/goods')
+
 /**
  * Маршрут для получения всех товаров:
  * Автор: Румянцев Александр
@@ -5,35 +7,10 @@
  * Версия: v1
  * Метод: GET
  * Пример работы с запросом:
- * Ввести в адресную строку - http://localhost:3000/get_all_good
+ * Ввести в адресную строку - http://localhost:3000/goods/get
  */
-module.exports = (app, connect) => app.get('/get_all_good', function(request, response){
-
-    // Составим запрос для БД
-    // SELECT - выборка (получить), ключевое слово
-    // * - обозначение всех полей в БД
-    // FROM - ключевое слово, означает откуда
-    // goods - название таблицы в БД
-    const sql = 'SELECT * FROM goods'
-
-    // Отправить запрос на сервер
-    // Для отправки запроса используем функцию query, передаем первым параметром запрос, а вторым callback
-    connect.query(
-        sql,
-        (error, result) => {
-            if(error){
-                // Выводим ошибку
-                response.send(
-                    error
-                )
-                // Если ошибок нет
-            }else{
-                // Отправляем результат запроса на экран
-                response.send(
-                    // Предварительно через метод JSON.stringify преобразуем объект в строку JSON
-                    JSON.stringify(result)
-                )
-            }
-        }
-    )
-})
+module.exports = (app, connect) =>
+	app.get('/goods/get', function (req, res) {
+		const workerTableGood = new WorkerTableGood(res, req)
+		workerTableGood.getAll()
+	})

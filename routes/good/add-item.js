@@ -1,3 +1,4 @@
+const WorkerTableGood = require('../../services/worker-tables/goods')
 // Добавляем плагин multer для работы с формами и файлами в node.js
 const multer = require('multer')
 //настраиваем куда будем сохранять файл
@@ -16,37 +17,22 @@ const uuid = require('uuid')
  */
 
 module.exports = (app, connect) => {
-	app.post('/add_item', fileFromForm, function (req, res) {
+	app.post('/goods/add', fileFromForm, function (req, res) {
 		// тут не можем читать данные с формы без дополнительных плагинов
-		const id = uuid.v4()
-		const title = req.body.TITLE
-		const discr = req.body.DISCR
-		const price = req.body.PRICE
-		const img = req.body.IMG
-		const count = req.body.COUNT
+		const data = {
+			ID: uuid.v4(),
+			TITLE: req.body.TITLE,
+			DISCR: req.body.DISCR,
+			PRICE: req.body.PRICE,
+			IMG: req.body.IMG,
+			COUNT: req.body.COUNT,
+		}
 
-		//Сгенерировать запрос для добавления товара в БД
-		// INSERT - добавление в БД
-		const sql =
-			'INSERT INTO `goods`(`ID`, `TITLE`, `DISCR`, `PRICE`, `IMG`, `COUNT`) ' +
-			'VALUES("' +
-			id +
-			'", "' +
-			title +
-			'", "' +
-			discr +
-			'", "' +
-			price +
-			'", "' +
-			img +
-			'", "' +
-			count +
-			'")'
-
-		connect.query(sql, (err, result) => {
-			err ? res.send(err) : res.send(JSON.stringify(result))
-		})
+		const workerTableGood = new WorkerTableGood(res, req)
+		workerTableGood.add(data)
 	})
+	//Сгенерировать запрос для добавления товара в БД
+	// INSERT - добавление в БД
 
 	/**
 	 * Вспомогательный маршрут для добавления одного товара:
@@ -62,17 +48,14 @@ module.exports = (app, connect) => {
 		res.send(
 			`
                 <h1>
-                    Тестовая форма для маршрута - add_user
+                    Тестовая форма для маршрута - goods/add
                 </h1>
-                <form enctype="multipart/form-data" action='/edit_item' method='post'>
-                    <input placeholder="NAME" type="text" name="NAME"/>
-                    <input placeholder="SURNAME" type="text" name="SURNAME"/>
+                <form enctype="multipart/form-data" action='/goods/add' method='post'>
+                    <input placeholder="TITLE" type="text" name="TITLE"/>
+                    <input placeholder="DISCR" type="text" name="DISCR"/>
+                    <input placeholder="PRICE" type="text" name="PRICE"/>
                     <input placeholder="IMG" type="text" name="IMG"/>
-                    <input placeholder="EMAIL" type="text" name="EMAIL"/>
-                    <input placeholder="PHONE" type="text" name="PHONE"/>
-                    <input placeholder="LOGIN" type="text" name="LOGIN"/>
-                    <input placeholder="PASSWORD" type="text" name="PASSWORD"/>
-                    <input placeholder="ROLE" type="text" name="ROLE"/>
+                    <input placeholder="COUNT" type="text" name="COUNT"/>
                     <input type='submit' value="Добавить"/>
                 </form>
             `
