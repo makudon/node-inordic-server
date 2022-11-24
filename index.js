@@ -140,6 +140,12 @@ require('./routes/user/edit-user')(app)
 //Роуты для отправки писем
 require('./routes/mail/index')(app)
 
+//Роуты для отзывов
+require('./routes/review/add-review')(app)
+require('./routes/review/edit-review')(app)
+require('./routes/review/get-all-reviews')(app)
+require('./routes/review/get-review')(app)
+
 //Начинаем прослушивать определенный порт
 app.listen(3000)
 
